@@ -103,7 +103,10 @@ def parse(input_, **kwargs):
         # block comment close
         if BLOCK_CLOSE_REGEX and block.type == 'block' and kwargs.get('block', None):
             if token := scan(BLOCK_CLOSE_REGEX, 'close'):
-                newline = token[2].groups()[0] or ''
+                try:
+                    newline = token[2].groups()[0]
+                except LookupError:
+                    newline = ''
                 push(Node(token[0], token[1], token[2], newline=newline))
                 pop()
                 continue
