@@ -109,7 +109,7 @@ def parse(input_, **kwargs):
                 continue
 
         # line comment
-        if LINE_REGEX and block.type != 'block' and kwargs['line']:
+        if LINE_REGEX and block.type != 'block' and kwargs.get('line', None):
             if token := scan(LINE_REGEX, 'line'):
                 push(Node(token[0], token[1], token[2]))
                 continue
