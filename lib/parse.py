@@ -86,6 +86,7 @@ def parse(input_, **kwargs):
         if block.type != 'block' and (not prev or not re.compile(r'\w$').match(prev.value)) and not (triple_quotes and remaining.startswith('"""')):
             if token := scan(QUOTED_STRING_REGEX, 'text'):
                 push(Node(token[0], token[1], token[2]))
+                continue
 
         # newlines
         if token := scan(NEWLINE_REGEX, 'newline'):
@@ -93,17 +94,17 @@ def parse(input_, **kwargs):
             continue
 
         # block comment open
-        if BLOCK_OPEN_REGEX and block.type == 'block' and not (triple_quotes and block.type == 'block'):
+        if BLOCK_OPEN_REGEX and kwargs.get('block', None) and not (triple_quotes and block.type == 'block'):
             if token := scan(BLOCK_OPEN_REGEX, 'open'):
                 push(Block(type_='block'))
                 push(Node(token[0], token[1], token[2]))
                 continue
 
         # block comment close
-        if BLOCK_CLOSE_REGEX and block.type == 'block' and kwargs['block']:
+        if BLOCK_CLOSE_REGEX and block.type == 'block' and kwargs.get('block', None):
             if token := scan(BLOCK_CLOSE_REGEX, 'close'):
-                token.newline = token._match[1] or ''
-                push(Node(token[0], token[1], token[2]))
+                newline = token[2].groups()[0] or ''
+                push(Node(token[0], token[1], token[2], newline=newline))
                 pop()
                 continue
 

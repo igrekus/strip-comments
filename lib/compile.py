@@ -16,10 +16,10 @@ def compile_(cst, **kwargs):
         for child in node.nodes:
             match child.type:
                 case 'block':
-                    if kwargs['first'] and first_seen is True:
+                    if kwargs.get('first', None) and first_seen is True:
                         output += _walk(child, node)
 
-                    if kwargs['preserve_newlines'] is True:
+                    if kwargs.get('preserve_newlines', None) is True:
                         inner = _walk(child, node)
                         lines = inner.split('\n')
                         output += '\n' * (len(lines) - 1)
