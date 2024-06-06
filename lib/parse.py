@@ -7,9 +7,9 @@ __all__ = [
 ]
 
 
-ESCAPED_CHAR_REGEX = re.compile(r'^\\./')
+ESCAPED_CHAR_REGEX = re.compile(r'^\\.')
 QUOTED_STRING_REGEX = re.compile(r'^([\'"`])((?:\\\1|[^\1])+?)(\1)')
-NEWLINE_REGEX = re.compile(r'^\r*\n/')
+NEWLINE_REGEX = re.compile(r'^\r*\n')
 
 
 def parse(input_, **kwargs):
