@@ -38,7 +38,6 @@ def test_strips_first_not_strips_rest():
     assert strip.first(source) == expected
 
 
-@pytest.mark.skip('protected fails')
 def test_strips_first_if_not_protected():
     source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/banner.js').read_text()
     expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/banner-protected.js').read_text()
@@ -87,9 +86,7 @@ def test_strips_all_but_not_globstars():
     assert actual == "var path = './do/not/strip/globs/**/*.js';"
 
 
-@pytest.mark.skip('protected fails')
 def test_strips_all_but_not_globstars_and_protected():
-    # //! safe=True
     source = 'var partPath = \'./path/*/to/scripts/**/\'; //! line comment'
     actual = strip.strip(source, safe=True)
 
@@ -168,17 +165,15 @@ def test_not_raises_on_empty_str_returns_empty_str():
 
 
 # strip all or empty
-@pytest.mark.skip('protected fails')
 def test_strips_all_file():
     source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/strip-all.js').read_text()
-    expected = source
+    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/strip-all.js').read_text()
 
     actual = strip.strip(source)
 
     assert actual == expected
 
 
-@pytest.mark.skip('protected fails')
 def test_not_strips_bang_comments():
     source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/strip-all.js').read_text()
     expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/strip-keep-block.js').read_text()
@@ -188,10 +183,9 @@ def test_not_strips_bang_comments():
     assert actual == expected
 
 
-@pytest.mark.skip('protected fails')
 def test_strips_all_line_but_not_bang_comments():
     source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/strip-keep-line.js').read_text()
-    expected = source
+    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/strip-keep-line.js').read_text()
 
     actual = strip.line(source, safe=True)
 
