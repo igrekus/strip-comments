@@ -55,7 +55,6 @@ def test_strips_lua():
     assert strip.strip(source, language='lua') == expected
 
 
-@pytest.mark.skip('handles wrongly')
 def test_strips_matlab():
     source = (fixt / 'matlab.txt').read_text()
     expected = (exp / 'matlab.txt').read_text()

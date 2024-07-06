@@ -83,7 +83,7 @@ def parse(input_, **kwargs):
             continue
 
         # quoted strings
-        if block.type != 'block' and (not prev or not re.compile(r'\w$').match(prev.value)) and not (triple_quotes and remaining.startswith('"""')):
+        if block.type != 'block' and (not prev or not re.compile(r'\w$').search(prev.value)) and not (triple_quotes and remaining.startswith('"""')):
             if token := scan(QUOTED_STRING_REGEX, 'text'):
                 push(Node(token[0], token[1], token[2]))
                 continue
