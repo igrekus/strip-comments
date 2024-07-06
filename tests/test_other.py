@@ -76,7 +76,6 @@ def test_strips_pascal():
     assert strip.strip(source, language='pascal') == expected
 
 
-@pytest.mark.skip('fails with nested # comments')
 def test_strips_php():
     source = (fixt / 'php.txt').read_text()
     expected = (exp / 'php.txt').read_text()
@@ -91,7 +90,6 @@ def test_strips_perl():
     assert strip.strip(source, language='perl') == expected
 
 
-@pytest.mark.skip('fails with docstring errors')
 def test_strips_python():
     source = (fixt / 'python.txt').read_text()
     expected = (exp / 'python.txt').read_text()
