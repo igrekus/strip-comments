@@ -6,8 +6,8 @@ import pytest
 
 import strip
 
-sources = pathlib.Path('/home/ipx/source/python/strip-comments/test/fixtures')
-targets = pathlib.Path('/home/ipx/source/python/strip-comments/test/expected')
+sources = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures')
+targets = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected')
 
 
 # js comments
@@ -32,22 +32,22 @@ def test_strips_blocks():
 
 
 def test_strips_first_not_strips_rest():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/test/fixtures/banner.js').read_text()
-    expected = pathlib.Path('/home/ipx/source/python/strip-comments/test/expected/banner.js').read_text()
+    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/banner.js').read_text()
+    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/banner.js').read_text()
 
     assert strip.first(source) == expected
 
 
 @pytest.mark.skip('protected fails')
 def test_strips_first_if_not_protected():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/test/fixtures/banner.js').read_text()
-    expected = pathlib.Path('/home/ipx/source/python/strip-comments/test/expected/banner-protected.js').read_text()
+    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/banner.js').read_text()
+    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/banner-protected.js').read_text()
 
     assert strip.first(source, keep_protected=True) == expected
 
 
 def test_not_strips_non_comments_in_quotes():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/test/fixtures/quoted-strings.js').read_text()
+    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/quoted-strings.js').read_text()
     expected = source
 
     assert strip.strip(source) == expected
@@ -113,7 +113,7 @@ def test_strips_all_but_not_any_globs_2():
 
 
 def test_not_touches_code_with_no_comments():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/test/fixtures/no-comment.js').read_text()
+    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/no-comment.js').read_text()
     actual = strip.strip(source)
     expected = source
 
@@ -170,7 +170,7 @@ def test_not_raises_on_empty_str_returns_empty_str():
 # strip all or empty
 @pytest.mark.skip('protected fails')
 def test_strips_all_file():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/test/fixtures/strip-all.js').read_text()
+    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/strip-all.js').read_text()
     expected = source
 
     actual = strip.strip(source)
@@ -180,8 +180,8 @@ def test_strips_all_file():
 
 @pytest.mark.skip('protected fails')
 def test_not_strips_bang_comments():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/test/fixtures/strip-all.js').read_text()
-    expected = pathlib.Path('/home/ipx/source/python/strip-comments/test/expected/strip-keep-block.js').read_text()
+    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/strip-all.js').read_text()
+    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/strip-keep-block.js').read_text()
 
     actual = strip.block(source, safe=True)
 
@@ -190,7 +190,7 @@ def test_not_strips_bang_comments():
 
 @pytest.mark.skip('protected fails')
 def test_strips_all_line_but_not_bang_comments():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/test/fixtures/strip-keep-line.js').read_text()
+    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/strip-keep-line.js').read_text()
     expected = source
 
     actual = strip.line(source, safe=True)
@@ -199,8 +199,8 @@ def test_strips_all_line_but_not_bang_comments():
 
 
 def test_strips_all_but_keeps_newlines():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/test/fixtures/strip-all.js').read_text()
-    expected = pathlib.Path('/home/ipx/source/python/strip-comments/test/expected/strip-keep-newlines.js').read_text()
+    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/strip-all.js').read_text()
+    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/strip-keep-newlines.js').read_text()
 
     actual = strip.strip(source, preserve_newlines=True)
 
