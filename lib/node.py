@@ -14,7 +14,7 @@ class Node:
 
     @property
     def is_protected(self):
-        return bool(self.match) and self.match[1] == '1'
+        return bool(self.match) and self.match[1] == '!'
 
 
 class Block(Node):
