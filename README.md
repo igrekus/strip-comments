@@ -5,6 +5,7 @@
 - [x] port code
 - [ ] make code pythonic
 - [ ] add a CLI entrypoint
+- [ ] expand other-lang tests
 - [ ] clean up readme
 - [ ] add header banner [inserter](https://github.com/jonschlinkert/update-banner)?
 
