@@ -1,5 +1,13 @@
 # This project is a port of strip-comments by Jon Schlinkert
 
+# TODO
+
+- [x] port code
+- [ ] make code pythonic
+- [ ] add a CLI entrypoint
+- [ ] clean up readme
+- [ ] add header banner [inserter](https://github.com/jonschlinkert/update-banner)?
+
 # strip-comments [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=W8YFZ425KND68) [![NPM version](https://img.shields.io/npm/v/strip-comments.svg?style=flat)](https://www.npmjs.com/package/strip-comments) [![NPM monthly downloads](https://img.shields.io/npm/dm/strip-comments.svg?style=flat)](https://npmjs.org/package/strip-comments) [![NPM total downloads](https://img.shields.io/npm/dt/strip-comments.svg?style=flat)](https://npmjs.org/package/strip-comments) [![Build Status](https://travis-ci.org/jonschlinkert/strip-comments.svg?branch=master)](https://travis-ci.org/jonschlinkert/strip-comments)
 
 > Strip line and/or block comments from a string. Blazing fast, and works with JavaScript, Sass, CSS, Less.js, and a number of other languages.
