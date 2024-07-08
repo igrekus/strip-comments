@@ -1,4 +1,0 @@
-
-
-my $s = "Wikipedia"; 
-print $s . "\n";     

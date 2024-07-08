@@ -1,4 +1,0 @@
-(* test diagonals *)
-columnDifference := testColumn - column;
-if (row + columnDifference = testRow) or
-    .......
