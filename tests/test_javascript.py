@@ -10,7 +10,6 @@ sources = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures')
 targets = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected')
 
 
-# js comments
 def test_strips_all_generic():
     assert strip.strip("'foo'; // this is a comment\n/* me too */ var abc = 'xyz';") == '\'foo\'; \n var abc = \'xyz\';'
 
@@ -32,21 +31,98 @@ def test_strips_blocks():
 
 
 def test_strips_first_not_strips_rest():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/banner.js').read_text()
-    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/banner.js').read_text()
+    source = '''/*!
+ * update-banner <https://github.com/jonschlinkert/update-banner>
+ *
+ * Copyright (c) 2015, Jon Schlinkert.
+ * Licensed under the MIT License.
+ */
+
+'use strict';
+
+/**
+ * Another comment
+ */
+
+function someFunction() {
+  // body...
+}'''
+
+    expected = '''
+'use strict';
+
+/**
+ * Another comment
+ */
+
+function someFunction() {
+  // body...
+}'''
 
     assert strip.first(source) == expected
 
 
 def test_strips_first_if_not_protected():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/banner.js').read_text()
-    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/banner-protected.js').read_text()
+    source = '''/*!
+ * update-banner <https://github.com/jonschlinkert/update-banner>
+ *
+ * Copyright (c) 2015, Jon Schlinkert.
+ * Licensed under the MIT License.
+ */
+
+'use strict';
+
+/**
+ * Another comment
+ */
+
+function someFunction() {
+  // body...
+}'''
+
+    expected = '''/*!
+ * update-banner <https://github.com/jonschlinkert/update-banner>
+ *
+ * Copyright (c) 2015, Jon Schlinkert.
+ * Licensed under the MIT License.
+ */
+
+'use strict';
+
+
+function someFunction() {
+  // body...
+}'''
 
     assert strip.first(source, keep_protected=True) == expected
 
 
 def test_not_strips_non_comments_in_quotes():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/quoted-strings.js').read_text()
+    source = '''window.amino_cec_callback = function (tag, source, destination, body) {
+    debug("///////////// cec_callback ////////////////////");
+    debug(tag + " " + source + " " + destination + " " + body);
+    debug("///////////// cec_callback ////////////////////");
+};
+
+const foo = {
+  "config": {
+    "properties": {
+      "device_id": {
+        "type": "string",
+        "title": "Device ID",
+        "label": {
+          "$ref": "/rpcs/device_ids#thermostats/*/{name}"
+        },
+        "oneOf": [{
+          "$ref": "/rpcs/device_ids#thermostats/*/{device_id}"
+        }]
+      }
+    },
+    "required": ["device_id"],
+    "disposition": ["device_id"]
+  }
+};'''
+
     expected = source
 
     assert strip.strip(source) == expected
@@ -110,11 +186,24 @@ def test_strips_all_but_not_any_globs_2():
 
 
 def test_not_touches_code_with_no_comments():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/no-comment.js').read_text()
-    actual = strip.strip(source)
+    source = ''''use strict';
+
+process.stdout.write('string literals: ');
+console.dir({
+  str0: '&apos;',
+  str1: "&quot;",
+  str2: ". // ' \\ . // ' \\ .",
+});
+
+process.stdout.write('RegExp literals: ');
+console.dir({
+  regexp0: /I'm the easiest in Chomsky hierarchy!/,
+});
+'''
+
     expected = source
 
-    assert actual == expected
+    assert strip.strip(source) == expected
 
 
 def test_works_with_comments_which_are_substrings_of_a_later_comment():
@@ -166,39 +255,295 @@ def test_not_raises_on_empty_str_returns_empty_str():
 
 # strip all or empty
 def test_strips_all_file():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/strip-all.js').read_text()
-    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/strip-all.js').read_text()
+    source = '''/*!
+ * strip this multiline
+ * block comment
+ */
+'use strict';
 
-    actual = strip.strip(source)
+/**!
+ * and this multiline
+ * block comment
+ */
+var foo = function(/* and these single-line block comment */) {};
 
-    assert actual == expected
+/**
+ * and this
+ * multiline block
+ * comment
+ */
+var bar = function(/* and that */) {};
+
+var baz = '//bar baz not a comment';
+
+// this single-line line comment
+var qux = function() {
+  // this multiline
+  // line comment
+  var some = true;
+  //this
+  var fafa = true; //and this
+  // var also = 'that';
+  var but = 'not'; //! that comment
+};
+
+// also this multiline
+// line comment
+var fun = false;
+var path = '/path/to/*/something/that/not/be/stripped.js';
+var globstar = '/path//to//globstar/not/be/stripped/**/*.js';'''
+
+    expected = ''''use strict';
+
+var foo = function() {};
+
+var bar = function() {};
+
+var baz = '//bar baz not a comment';
+
+
+var qux = function() {
+  
+  
+  var some = true;
+  
+  var fafa = true; 
+  
+  var but = 'not'; 
+};
+
+
+
+var fun = false;
+var path = '/path/to/*/something/that/not/be/stripped.js';
+var globstar = '/path//to//globstar/not/be/stripped/**/*.js';'''
+
+    assert strip.strip(source) == expected
 
 
 def test_not_strips_bang_comments():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/strip-all.js').read_text()
-    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/strip-keep-block.js').read_text()
+    source = '''/*!
+ * strip this multiline
+ * block comment
+ */
+'use strict';
 
-    actual = strip.block(source, safe=True)
+/**!
+ * and this multiline
+ * block comment
+ */
+var foo = function(/* and these single-line block comment */) {};
 
-    assert actual == expected
+/**
+ * and this
+ * multiline block
+ * comment
+ */
+var bar = function(/* and that */) {};
+
+var baz = '//bar baz not a comment';
+
+// this single-line line comment
+var qux = function() {
+  // this multiline
+  // line comment
+  var some = true;
+  //this
+  var fafa = true; //and this
+  // var also = 'that';
+  var but = 'not'; //! that comment
+};
+
+// also this multiline
+// line comment
+var fun = false;
+var path = '/path/to/*/something/that/not/be/stripped.js';
+var globstar = '/path//to//globstar/not/be/stripped/**/*.js';'''
+
+    expected = '''/*!
+ * strip this multiline
+ * block comment
+ */
+'use strict';
+
+/**!
+ * and this multiline
+ * block comment
+ */
+var foo = function() {};
+
+var bar = function() {};
+
+var baz = '//bar baz not a comment';
+
+// this single-line line comment
+var qux = function() {
+  // this multiline
+  // line comment
+  var some = true;
+  //this
+  var fafa = true; //and this
+  // var also = 'that';
+  var but = 'not'; //! that comment
+};
+
+// also this multiline
+// line comment
+var fun = false;
+var path = '/path/to/*/something/that/not/be/stripped.js';
+var globstar = '/path//to//globstar/not/be/stripped/**/*.js';'''
+
+    assert strip.block(source, safe=True) == expected
 
 
 def test_strips_all_line_but_not_bang_comments():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/strip-keep-line.js').read_text()
-    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/strip-keep-line.js').read_text()
+    source = '''/**
+ * this block comment
+ * will not be striped
+ */
 
-    actual = strip.line(source, safe=True)
+'use strict';
 
-    assert actual == expected
+//! and this multiline
+//! block comment
+var foo = function(/* and these single-line block comment */) {};
+
+/**
+ * and this
+ * multiline block
+ * comment
+ */
+var bar = function(/* and that */) {};
+
+//will be removed
+var baz = function() {
+  // this multiline
+  // line comment
+  var some = true;
+  // will be
+  var fafa = true;
+  // var removed = 'yes';
+  var but = 'not'; //! that comment
+};
+
+var path = '/path/to/*/something/that/not/be/stripped.js';
+var globstar = '/path/to/globstar/not/be/stripped/**/*.js';
+'''
+
+    expected = '''/**
+ * this block comment
+ * will not be striped
+ */
+
+'use strict';
+
+//! and this multiline
+//! block comment
+var foo = function(/* and these single-line block comment */) {};
+
+/**
+ * and this
+ * multiline block
+ * comment
+ */
+var bar = function(/* and that */) {};
+
+
+var baz = function() {
+  
+  
+  var some = true;
+  
+  var fafa = true;
+  
+  var but = 'not'; //! that comment
+};
+
+var path = '/path/to/*/something/that/not/be/stripped.js';
+var globstar = '/path/to/globstar/not/be/stripped/**/*.js';
+'''
+
+    assert strip.line(source, safe=True) == expected
 
 
 def test_strips_all_but_keeps_newlines():
-    source = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures/strip-all.js').read_text()
-    expected = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected/strip-keep-newlines.js').read_text()
+    source = '''/*!
+ * strip this multiline
+ * block comment
+ */
+'use strict';
 
-    actual = strip.strip(source, preserve_newlines=True)
+/**!
+ * and this multiline
+ * block comment
+ */
+var foo = function(/* and these single-line block comment */) {};
 
-    assert actual == expected
+/**
+ * and this
+ * multiline block
+ * comment
+ */
+var bar = function(/* and that */) {};
+
+var baz = '//bar baz not a comment';
+
+// this single-line line comment
+var qux = function() {
+  // this multiline
+  // line comment
+  var some = true;
+  //this
+  var fafa = true; //and this
+  // var also = 'that';
+  var but = 'not'; //! that comment
+};
+
+// also this multiline
+// line comment
+var fun = false;
+var path = '/path/to/*/something/that/not/be/stripped.js';
+var globstar = '/path//to//globstar/not/be/stripped/**/*.js';'''
+
+    expected = '''
+
+
+
+'use strict';
+
+
+
+
+
+var foo = function() {};
+
+
+
+
+
+
+var bar = function() {};
+
+var baz = '//bar baz not a comment';
+
+
+var qux = function() {
+  
+  
+  var some = true;
+  
+  var fafa = true; 
+  
+  var but = 'not'; 
+};
+
+
+
+var fun = false;
+var path = '/path/to/*/something/that/not/be/stripped.js';
+var globstar = '/path//to//globstar/not/be/stripped/**/*.js';'''
+
+    assert strip.strip(source, preserve_newlines=True) == expected
 
 
 def test_strips_blocks_inside_function():
@@ -214,8 +559,7 @@ def test_strips_blocks_before_and_inside_function():
 
 
 def test_strips_blocks_before_inside_and_after_function():
-    actual = strip.block(
-        '/* this is a comment */var bar = function(/*this is a comment*/) {return;};\n/* this is a comment*/')
+    actual = strip.block('/* this is a comment */var bar = function(/*this is a comment*/) {return;};\n/* this is a comment*/')
 
     assert actual == 'var bar = function() {return;};\n'
 
