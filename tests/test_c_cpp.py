@@ -1,5 +1,4 @@
-import strip
-
+import strip_comments.strip as strip
 
 source = '''CHAPTER 4 : Commenting
 PART 2 : COMMENTING AND NAMING

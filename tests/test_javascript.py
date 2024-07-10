@@ -4,10 +4,7 @@ import time
 
 import pytest
 
-import strip
-
-sources = pathlib.Path('/home/ipx/source/python/strip-comments/tests/fixtures')
-targets = pathlib.Path('/home/ipx/source/python/strip-comments/tests/expected')
+import strip_comments.strip as strip
 
 
 def test_strips_all_generic():

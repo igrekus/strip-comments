@@ -1,5 +1,4 @@
-import strip
-
+import strip_comments.strip as strip
 
 source = '''Python
 Inline comments in Python use the hash ('#') character, as in the two examples in this code:

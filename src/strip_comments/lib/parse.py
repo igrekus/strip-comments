@@ -1,6 +1,7 @@
-from .node import Node, Block
-import lib.languages as languages
 import re
+
+import strip_comments.lib.languages as languages
+from strip_comments.lib.node import Block, Node
 
 __all__ = [
   'parse'

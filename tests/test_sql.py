@@ -1,5 +1,4 @@
-import strip
-
+import strip_comments.strip as strip
 
 source = '''SQL
 Comments in SQL are in single-line-only form, when using two dashes:

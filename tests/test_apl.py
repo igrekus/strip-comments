@@ -1,4 +1,4 @@
-import strip
+import strip_comments.strip as strip
 
 source = '''⍝ Now add the numbers:
 c←a+b ⍝ addition

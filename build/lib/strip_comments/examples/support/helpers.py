@@ -1,4 +1,4 @@
-import lib.languages as langs
+import strip_comments.lib.languages as langs
 
 
 def strip(s: str) -> str:

@@ -1,5 +1,4 @@
-import strip
-
+import strip_comments.strip as strip
 
 source = '''(* test diagonals *)
 columnDifference := testColumn - column;

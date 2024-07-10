@@ -1,5 +1,4 @@
-import strip
-
+import strip_comments.strip as strip
 
 source = '''Swift
 Single-line comments begin with two forward-slashes (`//`):

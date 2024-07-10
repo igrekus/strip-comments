@@ -1,4 +1,4 @@
-import strip
+import strip_comments.strip as strip
 
 source = '''Ada
 The Ada programming language uses '--' to indicate a comment up to the end of the line.

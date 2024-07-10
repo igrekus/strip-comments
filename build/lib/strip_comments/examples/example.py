@@ -1,5 +1,5 @@
-import strip
 import pathlib
+import strip_comments.strip as strip
 
 sample = pathlib.Path('../test/fixtures/strip-all.js').read_text()
 banner = pathlib.Path('../test/fixtures/banner.js').read_text()

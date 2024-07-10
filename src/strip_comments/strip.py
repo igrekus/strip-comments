@@ -1,5 +1,5 @@
-from lib.compile import compile_
-from lib.parse import parse
+from .lib.compile import compile_
+from .lib.parse import parse
 
 
 def strip(input_, **kwargs):
