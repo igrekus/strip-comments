@@ -711,15 +711,13 @@ def test_strips_urls_in_blocks():
 
 
 def test_should_strip_line_before_function_but_not_blocks():
-    actual = strip.line(
-        '/* this is a comment */\n//this is a comment\nvar bar = function(/*this is a comment*/) {return;};')
+    actual = strip.line('/* this is a comment */\n//this is a comment\nvar bar = function(/*this is a comment*/) {return;};')
 
     assert actual == '/* this is a comment */\n\nvar bar = function(/*this is a comment*/) {return;};'
 
 
 def test_should_strip_line_before_and_after_function_but_not_blocks():
-    actual = strip.line(
-        '/* this is a comment */\n//this is a comment\nvar bar = function(/*this is a comment*/) {return;};\n//this is a line comment')
+    actual = strip.line('/* this is a comment */\n//this is a comment\nvar bar = function(/*this is a comment*/) {return;};\n//this is a line comment')
 
     assert actual == '/* this is a comment */\n\nvar bar = function(/*this is a comment*/) {return;};\n'
 

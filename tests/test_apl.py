@@ -10,4 +10,4 @@ c←a+b
 
 
 def test_strips_apl():
-    assert strip.strip(source, language='apl', preserves_newlines=True) == expected
+    assert strip.strip(source, language='apl', preserve_newlines=True) == expected
