@@ -1,7 +1,7 @@
 import re
 
-import strip_comments.lib.languages as languages
-from strip_comments.lib.node import Block, Node
+import strip_comments.languages as languages
+from strip_comments.models import Block, Node, Token
 
 __all__ = [
   'parse'
@@ -50,7 +50,7 @@ def parse(input_, **kwargs):
         match_ = regex.match(remaining)
         if match_:
             consume(match_[0])
-            return type_, match_[0], match_
+            return Token(type_, match_[0], match_)
 
     def push(node):
         nonlocal prev
@@ -80,48 +80,48 @@ def parse(input_, **kwargs):
     while remaining != '':
         # escaped characters
         if token := scan(ESCAPED_CHAR_REGEX, 'text'):
-            push(Node(token[0], token[1], token[2]))
+            push(Node(token.type, token.first_match, token.match))
             continue
 
         # quoted strings
         if block.type != 'block' and (not prev or not re.compile(r'\w$').search(prev.value)) and not (triple_quotes and remaining.startswith('"""')):
             if token := scan(QUOTED_STRING_REGEX, 'text'):
-                push(Node(token[0], token[1], token[2]))
+                push(Node(token.type, token.first_match, token.match))
                 continue
 
         # newlines
         if token := scan(NEWLINE_REGEX, 'newline'):
-            push(Node(token[0], token[1], token[2]))
+            push(Node(token.type, token.first_match, token.match))
             continue
 
         # block comment open
         if BLOCK_OPEN_REGEX and kwargs.get('block', None) and not (triple_quotes and block.type == 'block'):
             if token := scan(BLOCK_OPEN_REGEX, 'open'):
                 push(Block(type_='block'))
-                push(Node(token[0], token[1], token[2]))
+                push(Node(token.type, token.first_match, token.match))
                 continue
 
         # block comment close
         if BLOCK_CLOSE_REGEX and block.type == 'block' and kwargs.get('block', None):
             if token := scan(BLOCK_CLOSE_REGEX, 'close'):
                 try:
-                    newline = token[2].groups()[0]
+                    newline = token.match.groups()[0]
                 except LookupError:
                     newline = ''
-                push(Node(token[0], token[1], token[2], newline=newline))
+                push(Node(token.type, token.first_match, token.match, newline=newline))
                 pop()
                 continue
 
         # line comment
         if LINE_REGEX and block.type != 'block' and kwargs.get('line', None):
             if token := scan(LINE_REGEX, 'line'):
-                push(Node(token[0], token[1], token[2]))
+                push(Node(token.type, token.first_match, token.match))
                 continue
 
         # Plain text (skip "C" since some languages use "C" to start comments)
         token = scan(re.compile(r'^[a-zABD-Z0-9\t ]+'), 'text')
         if token:
-            push(Node(token[0], token[1], token[2]))
+            push(Node(token.type, token.first_match, token.match))
             continue
 
         push(Node(type_='text', value=consume(remaining[0])))

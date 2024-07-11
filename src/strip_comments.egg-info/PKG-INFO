@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: strip-comments
-Version: 1.0.0
+Version: 0.9.0
 Summary: Removes comments from source code files. Python port of Jon Schlinkert's strip-comments https://github.com/jonschlinkert/strip-comments
 Author: igrekus
 Project-URL: Documentation, https://github.com/igrekus/strip-comments/tree/master#readme

@@ -1,5 +1,5 @@
-from .lib.compile import compile_
-from .lib.parse import parse
+from strip_comments.parse import parse
+from strip_comments.walk import walk
 
 
 def strip(input_, **kwargs):
@@ -8,7 +8,7 @@ def strip(input_, **kwargs):
         'block': True,
         'line': True,
     }
-    return compile_(parse(input_, **opts), **opts)
+    return walk(parse(input_, **opts), **opts)
 
 
 def block(input_, **kwargs):
@@ -16,7 +16,7 @@ def block(input_, **kwargs):
         **kwargs,
         'block': True,
     }
-    return compile_(parse(input_, **opts), **opts)
+    return walk(parse(input_, **opts), **opts)
 
 
 def line(input_, **kwargs):
@@ -24,7 +24,7 @@ def line(input_, **kwargs):
         **kwargs,
         'line': True,
     }
-    return compile_(parse(input_, **opts), **opts)
+    return walk(parse(input_, **opts), **opts)
 
 
 def first(input_, **kwargs):
@@ -34,4 +34,4 @@ def first(input_, **kwargs):
         'line': True,
         'first': True,
     }
-    return compile_(parse(input_, **opts), **opts)
+    return walk(parse(input_, **opts), **opts)
