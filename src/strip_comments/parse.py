@@ -26,6 +26,28 @@ def _scan(remaining: str, regex: re.Pattern, type_='text'):
     return remaining, None
 
 
+def _pop(stack, block):
+    if block.type == 'root':
+        raise SyntaxError('Unclosed block comment')
+
+    stack.pop()
+    return stack[len(stack) - 1]
+
+
+def _push(stack, node, prev, block):
+    # mutates
+    if prev and prev.type == 'text' and node.type == 'text':
+        prev.value += node.value
+        return prev, block
+
+    block.push(node)
+    if hasattr(node, 'nodes'):
+        stack.append(node)
+        block = node
+    prev = node
+    return prev, block
+
+
 def parse(input_, **kwargs):
 
     if not isinstance(input_, str):
@@ -53,57 +75,32 @@ def parse(input_, **kwargs):
     if all(el.pattern == r'^"""' for el in source):
         triple_quotes = True
 
-    def push(node):
-        nonlocal prev
-        nonlocal block
-        nonlocal stack
-
-        if prev and prev.type == 'text' and node.type == 'text':
-            prev.value += node.value
-            return
-
-        block.push(node)
-        if hasattr(node, 'nodes'):
-            stack.append(node)
-            block = node
-        prev = node
-
-    def pop():
-        nonlocal stack
-        nonlocal block
-
-        if block.type == 'root':
-            raise SyntaxError('Unclosed block comment')
-
-        stack.pop()
-        block = stack[len(stack) - 1]
-
     while remaining != '':
         # escaped characters
         remaining, token = _scan(remaining, ESCAPED_CHAR_REGEX, 'text')
         if token:
-            push(Node.from_token(token))
+            prev, block = _push(stack, Node.from_token(token), prev, block)
             continue
 
         # quoted strings
         if block.type != 'block' and (not prev or not re.compile(r'\w$').search(prev.value)) and not (triple_quotes and remaining.startswith('"""')):
             remaining, token = _scan(remaining, QUOTED_STRING_REGEX, 'text')
             if token:
-                push(Node.from_token(token))
+                prev, block = _push(stack, Node.from_token(token), prev, block)
                 continue
 
         # newlines
         remaining, token = _scan(remaining, NEWLINE_REGEX, 'newline')
         if token:
-            push(Node.from_token(token))
+            prev, block = _push(stack, Node.from_token(token), prev, block)
             continue
 
         # block comment open
         if BLOCK_OPEN_REGEX and kwargs.get('block', None) and not (triple_quotes and block.type == 'block'):
             remaining, token = _scan(remaining, BLOCK_OPEN_REGEX, 'open')
             if token:
-                push(Block(type_='block'))
-                push(Node.from_token(token))
+                prev, block = _push(stack, Block(type_='block'), prev, block)
+                prev, block = _push(stack, Node.from_token(token), prev, block)
                 continue
 
         # block comment close
@@ -114,24 +111,24 @@ def parse(input_, **kwargs):
                     newline = token.match.groups()[0]
                 except LookupError:
                     newline = ''
-                push(Node.from_token(token, newline))
-                pop()
+                prev, block = _push(stack, Node.from_token(token, newline), prev, block)
+                block = _pop(stack, block)
                 continue
 
         # line comment
         if LINE_REGEX and block.type != 'block' and kwargs.get('line', None):
             remaining, token = _scan(remaining, LINE_REGEX, 'line')
             if token:
-                push(Node.from_token(token))
+                prev, block = _push(stack, Node.from_token(token), prev, block)
                 continue
 
         # Plain text (skip 'C' since some languages use 'C' to start comments)
         remaining, token = _scan(remaining, re.compile(r'^[a-zABD-Z0-9\t ]+'), 'text')
         if token:
-            push(Node.from_token(token))
+            prev, block = _push(stack, Node.from_token(token), prev, block)
             continue
 
         value, remaining = _consume(remaining[0], remaining)
-        push(Node(type_='text', value=value))
+        prev, block = _push(stack, Node(type_='text', value=value), prev, block)
 
     return cst
