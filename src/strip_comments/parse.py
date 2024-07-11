@@ -2,7 +2,7 @@ import re
 from typing import Tuple
 
 import strip_comments.languages as languages
-from strip_comments.models import Block, Node, Token
+from strip_comments.models import Block, Node, Options, Token
 from strip_comments.stack import Stack
 
 __all__ = [
@@ -27,14 +27,14 @@ def _scan(remaining: str, regex: re.Pattern, type_='text'):
     return remaining, None
 
 
-def parse(input_, **kwargs):
+def parse(input_: str, options: Options) -> Block:
 
     if not isinstance(input_, str):
         raise ValueError('Expected input to be a string')
 
     cst = Block(type_='root', nodes=[])
     stack = Stack([cst])
-    name = kwargs.get('language', 'javascript').lower()
+    name = options.language.lower()
     lang = getattr(languages, name, None)
 
     if lang is None:
@@ -75,7 +75,7 @@ def parse(input_, **kwargs):
             continue
 
         # block comment open
-        if BLOCK_OPEN_REGEX and kwargs.get('block', None) and not (triple_quotes and block.type == 'block'):
+        if BLOCK_OPEN_REGEX and options.block and not (triple_quotes and block.type == 'block'):
             remaining, token = _scan(remaining, BLOCK_OPEN_REGEX, 'open')
             if token:
                 prev, block = stack.push(Block(type_='block'), prev, block)
@@ -83,7 +83,7 @@ def parse(input_, **kwargs):
                 continue
 
         # block comment close
-        if BLOCK_CLOSE_REGEX and block.type == 'block' and kwargs.get('block', None):
+        if BLOCK_CLOSE_REGEX and block.type == 'block' and options.block:
             remaining, token = _scan(remaining, BLOCK_CLOSE_REGEX, 'close')
             if token:
                 try:
@@ -95,7 +95,7 @@ def parse(input_, **kwargs):
                 continue
 
         # line comment
-        if LINE_REGEX and block.type != 'block' and kwargs.get('line', None):
+        if LINE_REGEX and block.type != 'block' and options.line:
             remaining, token = _scan(remaining, LINE_REGEX, 'line')
             if token:
                 prev, block = stack.push(Node.from_token(token), prev, block)

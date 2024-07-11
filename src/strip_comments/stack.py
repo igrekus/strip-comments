@@ -2,8 +2,13 @@ from typing import Tuple
 
 from strip_comments.models import Block, Node
 
+__all__ = [
+    'Stack'
+]
+
 
 class Stack:
+
     def __init__(self, initial: list[Node | Block] | None = None):
         self._stack = list(initial) or []
 

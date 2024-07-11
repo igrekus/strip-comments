@@ -4,8 +4,20 @@ from dataclasses import dataclass, field
 __all__ = [
     'Block',
     'Node',
+    'Options',
     'Token',
 ]
+
+
+@dataclass
+class Options:
+    block: bool = False
+    line: bool = False
+    first: bool = False
+    language: str = 'javascript'
+    keep_protected: bool = False
+    safe: bool = False
+    preserve_newlines: bool = False
 
 
 @dataclass
