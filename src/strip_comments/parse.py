@@ -18,6 +18,14 @@ def _consume(value: str, remaining: str) -> Tuple[str, str]:
     return value, remaining[len(value):]
 
 
+def _scan(remaining: str, regex: re.Pattern, type_='text'):
+    match_ = regex.match(remaining)
+    if match_:
+        _, tail = _consume(match_[0], remaining)
+        return tail, Token(type_, match_[0], match_)
+    return remaining, None
+
+
 def parse(input_, **kwargs):
 
     if not isinstance(input_, str):
@@ -44,13 +52,6 @@ def parse(input_, **kwargs):
 
     if all(el.pattern == r'^"""' for el in source):
         triple_quotes = True
-
-    def scan(regex: re.Pattern, type_='text'):
-        nonlocal remaining
-        match_ = regex.match(remaining)
-        if match_:
-            _, remaining = _consume(match_[0], remaining)
-            return Token(type_, match_[0], match_)
 
     def push(node):
         nonlocal prev
@@ -79,31 +80,36 @@ def parse(input_, **kwargs):
 
     while remaining != '':
         # escaped characters
-        if token := scan(ESCAPED_CHAR_REGEX, 'text'):
+        remaining, token = _scan(remaining, ESCAPED_CHAR_REGEX, 'text')
+        if token:
             push(Node.from_token(token))
             continue
 
         # quoted strings
         if block.type != 'block' and (not prev or not re.compile(r'\w$').search(prev.value)) and not (triple_quotes and remaining.startswith('"""')):
-            if token := scan(QUOTED_STRING_REGEX, 'text'):
+            remaining, token = _scan(remaining, QUOTED_STRING_REGEX, 'text')
+            if token:
                 push(Node.from_token(token))
                 continue
 
         # newlines
-        if token := scan(NEWLINE_REGEX, 'newline'):
+        remaining, token = _scan(remaining, NEWLINE_REGEX, 'newline')
+        if token:
             push(Node.from_token(token))
             continue
 
         # block comment open
         if BLOCK_OPEN_REGEX and kwargs.get('block', None) and not (triple_quotes and block.type == 'block'):
-            if token := scan(BLOCK_OPEN_REGEX, 'open'):
+            remaining, token = _scan(remaining, BLOCK_OPEN_REGEX, 'open')
+            if token:
                 push(Block(type_='block'))
                 push(Node.from_token(token))
                 continue
 
         # block comment close
         if BLOCK_CLOSE_REGEX and block.type == 'block' and kwargs.get('block', None):
-            if token := scan(BLOCK_CLOSE_REGEX, 'close'):
+            remaining, token = _scan(remaining, BLOCK_CLOSE_REGEX, 'close')
+            if token:
                 try:
                     newline = token.match.groups()[0]
                 except LookupError:
@@ -114,12 +120,14 @@ def parse(input_, **kwargs):
 
         # line comment
         if LINE_REGEX and block.type != 'block' and kwargs.get('line', None):
-            if token := scan(LINE_REGEX, 'line'):
+            remaining, token = _scan(remaining, LINE_REGEX, 'line')
+            if token:
                 push(Node.from_token(token))
                 continue
 
         # Plain text (skip 'C' since some languages use 'C' to start comments)
-        if token := scan(re.compile(r'^[a-zABD-Z0-9\t ]+'), 'text'):
+        remaining, token = _scan(remaining, re.compile(r'^[a-zABD-Z0-9\t ]+'), 'text')
+        if token:
             push(Node.from_token(token))
             continue
 
