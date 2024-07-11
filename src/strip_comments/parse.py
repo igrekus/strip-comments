@@ -1,4 +1,5 @@
 import re
+from typing import Tuple
 
 import strip_comments.languages as languages
 from strip_comments.models import Block, Node, Token
@@ -11,6 +12,10 @@ __all__ = [
 ESCAPED_CHAR_REGEX = re.compile(r'^\\.')
 QUOTED_STRING_REGEX = re.compile(r'^([\'"`])((?:\\\1|[^\1])+?)(\1)')
 NEWLINE_REGEX = re.compile(r'^\r*\n')
+
+
+def _consume(value: str, remaining: str) -> Tuple[str, str]:
+    return value, remaining[len(value):]
 
 
 def parse(input_, **kwargs):
@@ -32,7 +37,6 @@ def parse(input_, **kwargs):
 
     block = cst
     remaining = input_
-    token = ''
     prev: Node | None = None
 
     source = list(filter(bool, [BLOCK_OPEN_REGEX, BLOCK_CLOSE_REGEX]))
@@ -41,15 +45,11 @@ def parse(input_, **kwargs):
     if all(el.pattern == r'^"""' for el in source):
         triple_quotes = True
 
-    def consume(value):
-        nonlocal remaining
-        remaining = remaining[len(value):]
-        return value
-
     def scan(regex: re.Pattern, type_='text'):
+        nonlocal remaining
         match_ = regex.match(remaining)
         if match_:
-            consume(match_[0])
+            _, remaining = _consume(match_[0], remaining)
             return Token(type_, match_[0], match_)
 
     def push(node):
@@ -123,6 +123,7 @@ def parse(input_, **kwargs):
             push(Node.from_token(token))
             continue
 
-        push(Node(type_='text', value=consume(remaining[0])))
+        value, remaining = _consume(remaining[0], remaining)
+        push(Node(type_='text', value=value))
 
     return cst
