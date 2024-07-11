@@ -34,6 +34,10 @@ class Node:
     def type(self):
         return self.type_
 
+    @classmethod
+    def from_token(cls, token: Token, newline: str = '') -> 'Node':
+        return cls(token.type, token.first_match, token.match, newline)
+
 
 @dataclass
 class Block(Node):
