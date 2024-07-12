@@ -14,7 +14,7 @@ class Options:
     block: bool = False
     line: bool = False
     first: bool = False
-    language: str = 'javascript'
+    language: dict = field(default_factory=dict)
     keep_protected: bool = False
     safe: bool = False
     preserve_newlines: bool = False

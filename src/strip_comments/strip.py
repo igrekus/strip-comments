@@ -1,6 +1,8 @@
 from strip_comments.models import Options
 from strip_comments.parse import parse
 from strip_comments.walk import walk
+import strip_comments.languages as languages
+
 
 __all__ = [
     'block',
@@ -11,7 +13,7 @@ __all__ = [
 
 
 def strip(
-        source,
+        source: str,
         block=True,
         line=True,
         first=False,
@@ -20,11 +22,20 @@ def strip(
         safe=False,
         preserve_newlines=False
 ):
+    if not isinstance(source, str):
+        raise ValueError('Expected input to be a string')
+
+    name = language.lower()
+    lang = getattr(languages, name, None)
+
+    if lang is None:
+        raise ValueError(f'Language {name} is not supported by strip-comments')
+
     options = Options(
         block=block,
         line=line,
         first=first,
-        language=language,
+        language=lang,
         keep_protected=keep_protected,
         safe=safe,
         preserve_newlines=preserve_newlines,
