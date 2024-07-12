@@ -10,18 +10,6 @@ __all__ = [
 ]
 
 
-def _consume(value: str, remaining: str) -> Tuple[str, str]:
-    return value, remaining[len(value):]
-
-
-def _scan(remaining: str, regex: re.Pattern, type_='text'):
-    match_ = regex.match(remaining)
-    if match_:
-        _, tail = _consume(match_[0], remaining)
-        return tail, Token(type_, match_[0], match_)
-    return remaining, None
-
-
 def parse(input_: str, options: Options) -> Block:
 
     if not isinstance(input_, str):
@@ -106,3 +94,15 @@ def parse(input_: str, options: Options) -> Block:
         prev, block = stack.push(Node(type_='text', value=value), prev, block)
 
     return cst
+
+
+def _consume(value: str, remaining: str) -> Tuple[str, str]:
+    return value, remaining[len(value):]
+
+
+def _scan(remaining: str, regex: re.Pattern, type_='text'):
+    match_ = regex.match(remaining)
+    if match_:
+        _, tail = _consume(match_[0], remaining)
+        return tail, Token(type_, match_[0], match_)
+    return remaining, None
