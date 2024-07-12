@@ -9,25 +9,46 @@ __all__ = [
 
 class Stack:
 
-    def __init__(self, initial: list[Node | Block] | None = None):
-        self._stack = list(initial) or []
+    def __init__(self):
+        self._cst = Block(type_='root', nodes=[])
+        self._stack = [self._cst]
+        self._current_block = self._cst
+        self._prev: Node | None = None
 
-    def push(self, node: Node | Block, prev, block) -> Tuple[Node | Block, Node | Block]:
-        # mutates
-        if prev and prev.type == 'text' and node.type == 'text':
-            prev.value += node.value
-            return prev, block
+    def push(self, node: Node | Block) -> None:
+        if self._prev and self._prev.type == 'text' and node.type == 'text':
+            self._prev.value += node.value
+            return
 
-        block.push(node)
+        self._current_block.push(node)
         if hasattr(node, 'nodes'):
             self._stack.append(node)
-            block = node
-        prev = node
-        return prev, block
+            self._current_block = node
+        self._prev = node
 
-    def pop(self, block) -> Node | Block:
-        if block.type == 'root':
-            raise SyntaxError('Unclosed block comment')
+    def pop(self) -> None:
+        if self._current_block.type == 'root':
+            raise ValueError('Unclosed block comment in the input source')
 
         self._stack.pop()
-        return self._stack[len(self._stack) - 1]
+        self._current_block = self._stack[len(self._stack) - 1]
+
+    @property
+    def cst(self) -> Block:
+        return self._cst
+
+    @property
+    def cur_block_type(self) -> str:
+        return self._current_block.type
+
+    @property
+    def is_prev_exists(self) -> bool:
+        return bool(self._prev)
+
+    @property
+    def prev_value(self) -> str | None:
+        return self._prev.value
+
+    @property
+    def is_block(self):
+        return self.cur_block_type == 'block'

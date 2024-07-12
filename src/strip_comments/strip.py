@@ -1,8 +1,7 @@
+import strip_comments.languages as languages
 from strip_comments.models import Options
 from strip_comments.parse import parse
 from strip_comments.walk import walk
-import strip_comments.languages as languages
-
 
 __all__ = [
     'block',
