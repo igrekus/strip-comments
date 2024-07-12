@@ -1,4 +1,4 @@
-import strip_comments.strip as strip
+from strip_comments import strip
 
 source = '''{- this is a comment
 on more lines -}

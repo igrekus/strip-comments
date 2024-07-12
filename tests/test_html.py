@@ -1,4 +1,4 @@
-import strip_comments.strip as strip
+from strip_comments import strip
 
 
 def test_strip_generic():

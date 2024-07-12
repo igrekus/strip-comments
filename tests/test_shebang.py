@@ -1,4 +1,4 @@
-import strip_comments.strip as strip
+from strip_comments import strip
 
 source = '''#!/bin/cat
 Hello world!

@@ -1,10 +1,9 @@
 import json
-import pathlib
 import time
 
 import pytest
 
-import strip_comments.strip as strip
+from strip_comments import strip
 
 
 def test_strips_all_generic():

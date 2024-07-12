@@ -1,4 +1,4 @@
-import strip_comments.strip as strip
+from strip_comments import strip
 
 source = '''MATLAB
 In MATLAB's programming language, the '%' character indicates a single-line comment. Multi line comments are also available via `%{` and `%}` brackets and can be nested, e.g.

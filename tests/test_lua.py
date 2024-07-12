@@ -1,4 +1,4 @@
-import strip_comments.strip as strip
+from strip_comments import strip
 
 source = '''Lua
 The Lua programming language uses double-hyphens, `--`, for single line comments in a similar way to Ada, Eiffel, Haskell, SQL and VHDL languages. Lua also has block comments, which start with `--[[` and run until a closing `]]`

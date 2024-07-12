@@ -1,4 +1,4 @@
-import strip_comments.strip as strip
+from strip_comments import strip
 
 source = '''PHP supports 'C', 'C++' and Unix shell-style (Perl style) comments. For example:
 
