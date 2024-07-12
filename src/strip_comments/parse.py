@@ -10,11 +10,6 @@ __all__ = [
 ]
 
 
-ESCAPED_CHAR_REGEX = re.compile(r'^\\.')
-QUOTED_STRING_REGEX = re.compile(r'^([\'"`])((?:\\\1|[^\1])+?)(\1)')
-NEWLINE_REGEX = re.compile(r'^\r*\n')
-
-
 def _consume(value: str, remaining: str) -> Tuple[str, str]:
     return value, remaining[len(value):]
 
@@ -56,20 +51,20 @@ def parse(input_: str, options: Options) -> Block:
 
     while remaining != '':
         # escaped characters
-        remaining, token = _scan(remaining, ESCAPED_CHAR_REGEX, 'text')
+        remaining, token = _scan(remaining, languages.ESCAPED_CHAR_REGEX, 'text')
         if token:
             prev, block = stack.push(Node.from_token(token), prev, block)
             continue
 
         # quoted strings
         if block.type != 'block' and (not prev or not re.compile(r'\w$').search(prev.value)) and not (triple_quotes and remaining.startswith('"""')):
-            remaining, token = _scan(remaining, QUOTED_STRING_REGEX, 'text')
+            remaining, token = _scan(remaining, languages.QUOTED_STRING_REGEX, 'text')
             if token:
                 prev, block = stack.push(Node.from_token(token), prev, block)
                 continue
 
         # newlines
-        remaining, token = _scan(remaining, NEWLINE_REGEX, 'newline')
+        remaining, token = _scan(remaining, languages.NEWLINE_REGEX, 'newline')
         if token:
             prev, block = stack.push(Node.from_token(token), prev, block)
             continue

@@ -1,5 +1,10 @@
 import re
 
+ESCAPED_CHAR_REGEX = re.compile(r'^\\.')
+QUOTED_STRING_REGEX = re.compile(r'^([\'"`])((?:\\\1|[^\1])+?)(\1)')
+NEWLINE_REGEX = re.compile(r'^\r*\n')
+
+
 ada = {
     'LINE_REGEX': re.compile(r'^--.*'),
 }
