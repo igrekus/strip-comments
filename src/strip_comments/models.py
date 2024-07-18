@@ -16,7 +16,6 @@ class Options:
     first: bool = False
     language: dict = field(default_factory=dict)
     keep_protected: bool = False
-    safe: bool = False
     preserve_newlines: bool = False
 
 

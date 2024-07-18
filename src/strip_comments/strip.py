@@ -18,7 +18,6 @@ def strip(
         first=False,
         language='javascript',
         keep_protected=False,
-        safe=False,
         preserve_newlines=False
 ):
     if not isinstance(source, str):
@@ -36,13 +35,12 @@ def strip(
         first=first,
         language=lang,
         keep_protected=keep_protected,
-        safe=safe,
         preserve_newlines=preserve_newlines,
     )
     return walk(parse(source, options), options)
 
 
-def block(source, language='javascript', keep_protected=False, safe=False, preserve_newlines=False):
+def block(source, language='javascript', keep_protected=False, preserve_newlines=False):
     return strip(
         source,
         block=True,
@@ -50,12 +48,11 @@ def block(source, language='javascript', keep_protected=False, safe=False, prese
         first=False,
         language=language,
         keep_protected=keep_protected,
-        safe=safe,
         preserve_newlines=preserve_newlines
     )
 
 
-def line(source, language='javascript', keep_protected=False, safe=False, preserve_newlines=False):
+def line(source, language='javascript', keep_protected=False, preserve_newlines=False):
     return strip(
         source,
         block=False,
@@ -63,12 +60,11 @@ def line(source, language='javascript', keep_protected=False, safe=False, preser
         first=False,
         language=language,
         keep_protected=keep_protected,
-        safe=safe,
         preserve_newlines=preserve_newlines
     )
 
 
-def first(source, language='javascript', keep_protected=False, safe=False, preserve_newlines=False):
+def first(source, language='javascript', keep_protected=False, preserve_newlines=False):
     return strip(
         source,
         block=True,
@@ -76,6 +72,5 @@ def first(source, language='javascript', keep_protected=False, safe=False, prese
         first=True,
         language=language,
         keep_protected=keep_protected,
-        safe=safe,
         preserve_newlines=preserve_newlines
     )

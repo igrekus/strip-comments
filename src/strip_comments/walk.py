@@ -53,7 +53,7 @@ def _recur(node, keep_protected: bool, first_seen: bool, first: bool, preserve_n
 def walk(cst, options: Options):
     return _recur(
         cst,
-        keep_protected=options.safe or options.keep_protected,
+        keep_protected=options.keep_protected,
         first_seen=False,
         first=options.first,
         preserve_newlines=options.preserve_newlines
