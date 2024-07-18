@@ -17,26 +17,28 @@ def main() -> None:
     parser.add_argument('-f', '--first-only', action='store_true',
                         help='strip only the first comment')
     parser.add_argument('-t', '--language', type=str, default='javascript',
-                        help='programming language (autodetect TODO)')
+                        help='programming language (TODO autodetect)')
     parser.add_argument('-p', '--keep-protected', action='store_true',
                         help='keep protected comments (starting with a "!" char)')
     parser.add_argument('-n', '--preserve-newlines', action='store_true',
                         help='preserve newlines of stripped comments')
 
     args = parser.parse_args()
-    print(args)
 
-    file = args.files[0]
-    res = strip.strip(
-        source=file.read_text(),
-        block=True if not args.keep_block else False,
-        line=True if not args.keep_line else False,
-        first=True if args.first_only else False,
-        language=args.language,
-        keep_protected=args.keep_protected,
-        preserve_newlines=args.preserve_newlines
-    )
-    print(res)
+    for file in args.files:
+        res = strip.strip(
+            source=file.read_text(),
+            block=True if not args.keep_block else False,
+            line=True if not args.keep_line else False,
+            first=True if args.first_only else False,
+            language=args.language,
+            keep_protected=args.keep_protected,
+            preserve_newlines=args.preserve_newlines
+        )
+        if args.write:
+            file.write_text(res)
+        else:
+            print(res)
 
 
 if __name__ == '__main__':
