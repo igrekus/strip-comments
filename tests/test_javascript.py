@@ -261,7 +261,7 @@ def test_strips_all_but_not_globstars():
 
 def test_strips_all_but_not_globstars_and_protected():
     source = 'var partPath = \'./path/*/to/scripts/**/\'; //! line comment'
-    actual = strip.strip(source, safe=True)
+    actual = strip.strip(source, keep_protected=True)
 
     assert actual == 'var partPath = \'./path/*/to/scripts/**/\'; //! line comment'
 
@@ -490,7 +490,7 @@ var fun = false;
 var path = '/path/to/*/something/that/not/be/stripped.js';
 var globstar = '/path//to//globstar/not/be/stripped/**/*.js';'''
 
-    assert strip.block(source, safe=True) == expected
+    assert strip.block(source, keep_protected=True) == expected
 
 
 def test_strips_all_line_but_not_bang_comments():
@@ -560,7 +560,7 @@ var path = '/path/to/*/something/that/not/be/stripped.js';
 var globstar = '/path/to/globstar/not/be/stripped/**/*.js';
 '''
 
-    assert strip.line(source, safe=True) == expected
+    assert strip.line(source, keep_protected=True) == expected
 
 
 def test_strips_all_but_keeps_newlines():
