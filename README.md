@@ -163,7 +163,7 @@ $ pip install pytest
 
 ### License
 
-Copyright © 2024, [igrekus](https://github.com/igrekus).
+Copyright © 2024-present, [igrekus](https://github.com/igrekus).
 Released under the [MIT License](LICENSE).
 
 ## TODO
