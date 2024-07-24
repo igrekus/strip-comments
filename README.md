@@ -46,10 +46,16 @@ Supports:
 
 ## Install
 
-Install with pip (TBD):
-
+Via pypi (pypi package TBD)
 ```sh
 pip install strip-comments
+```
+
+From source
+```sh
+git clone https://github.com/igrekus/strip-comments.git
+cd strip-comments
+pip install .
 ```
 
 ## CLI usage
@@ -156,8 +162,8 @@ Pull requests and stars are always welcome. For bugs and feature requests, pleas
 <summary><strong>Running Tests</strong></summary>
 
 ```sh
-$ pip install pytest
-# pytest tests
+pip install pytest
+pytest tests
 ```
 </details>
 
