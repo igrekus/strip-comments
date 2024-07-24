@@ -1,4 +1,6 @@
 import argparse
+import glob
+import sys
 from pathlib import Path
 
 from strip_comments import strip
@@ -8,6 +10,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('files', nargs='+', type=Path,
                         help='input files')
+    parser.add_argument('-r', '--recursive', action='store_true',
+                        help='process files in the specified directory recursively')
     parser.add_argument('-w', '--write', action='store_true',
                         help='make changes in-place')
     parser.add_argument('-b', '--keep-block', action='store_true',
@@ -25,9 +29,21 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    for file in args.files:
+    files = args.files
+    if args.recursive:
+        if not args.files[0].is_dir():
+            print('the first arg must be a directory if --recursive is set')
+            sys.exit(1)
+        files = glob.glob(f'{args.files[0]}/**', recursive=True)
+
+    for file in files:
+        file_path = Path(file)
+        if not file_path.is_file():
+            continue
+
+        print(f'process {file}')
         res = strip.strip(
-            source=file.read_text(),
+            source=file_path.read_text(),
             block=True if not args.keep_block else False,
             line=True if not args.keep_line else False,
             first=True if args.first_only else False,
