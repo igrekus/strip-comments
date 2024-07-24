@@ -1,4 +1,5 @@
 # strip-comments
+[![build](https://github.com/igrekus/strip-comments/actions/workflows/python-package.yml/badge.svg)](https://github.com/igrekus/strip-comments/actions/workflows/python-package.yml)
 
 Strip line and/or block comments from a string. Works with JavaScript, Sass, CSS, Less.js, and a number of other languages.
 
