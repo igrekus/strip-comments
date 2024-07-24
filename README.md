@@ -178,8 +178,8 @@ Released under the [MIT License](LICENSE).
 - [x] make code pythonic (kinda)
 - [x] add CLI entrypoint
 - [x] update readme
+- [x] add the ability to handle directories on the input
 - [ ] make a pypi package
-- [ ] add the ability to handle directories on the input
 - [ ] expand other-lang tests
 - [ ] add header banner? [inserter](https://github.com/jonschlinkert/update-banner)?
 - [ ] add fancy badges
