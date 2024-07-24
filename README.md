@@ -182,5 +182,6 @@ Released under the [MIT License](LICENSE).
 - [x] add the ability to handle directories on the input
 - [ ] make a pypi package
 - [ ] expand other-lang tests
+- [ ] add lang auto-detect of some sort
 - [ ] add header [banner](https://github.com/jonschlinkert/update-banner)?
 - [ ] add fancy badges to readme
